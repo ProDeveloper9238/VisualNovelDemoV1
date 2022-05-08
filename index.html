@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<meta charset = "utf-8">
+		<link href = "style.css" rel = "stylesheet">
+		<title>Визуальная новелла</title>
+		<script src = "script.js"></script>
+		<script>
+			let page = 0;
+			let block = 0;
+			let char = 0;
+			let startChar = 0;
+			let interval = 0;
+
+			function update(plusOrMinus) {
+				if ((plusOrMinus === "plus") && (page != text[block].length - 1)) {
+					page++;
+						
+					if (text[block][page].slice(0, 7) === "/choice") {
+						char = 7;
+						startChar = 7;
+
+						if (block === 0) {
+							first = "Осмотреть шлюпку";
+							second = "Осмотреть космос";
+						} else if (block === 2) {
+							first = "Осмотреть шлюпку";
+							second = "Прилечь поспать";
+						} else if (block === 1) {
+							first = "Разобраться с радио";
+							second = "Прилечь поспать";
+						} else if (block === 5) {
+							first = "Не открывать";
+							second = "Открыть";
+						} else if (block === 7) {
+							first = "Сказать правду";
+							second = "Запугать";
+						} else if (block === 9) {
+							first = "Да";
+							second = "Нет";
+						}
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr>
+								<td class = "choiceTableData"><div class = "choiceLeft" onclick = "choiceFirst()">` + first + `</div></td>
+								<td class = "choiceTableData"><div class = "choiceRight" onclick = "choiceSecond()">` + second + `</div></td>
+							</tr>
+						</table>`;
+					} else {
+						char = 0;
+						startChar = 0;
+						document.getElementById("choice").innerHTML = ``;
+					}
+
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if ((plusOrMinus === "minus") && (page != 0)) {
+					page--;				
+					char = 0;
+					startChar = 0;
+					document.getElementById("choice").innerHTML = ``;
+			
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if (plusOrMinus === "newBlock") {
+
+					if (text[block][page].slice(0, 7) === "/choice") {
+						char = 7;
+						startChar = 7;
+
+						if (block === 0) {
+							first = "Осмотреть шлюпку";
+							second = "Осмотреть космос";
+						} else if (block === 2) {
+							first = "Осмотреть шлюпку";
+							second = "Прилечь поспать";
+						} else if (block === 1) {
+							first = "Разобраться с радио";
+							second = "Прилечь поспать";
+						} else if (block === 5) {
+							first = "Не открывать";
+							second = "Открыть";
+						} else if (block === 7) {
+							first = "Сказать правду";
+							second = "Запугать";
+						} else if (block === 9) {
+							first = "Да";
+							second = "Нет";
+						}
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr>
+								<td class = "choiceTableData"><div class = "choiceLeft" onclick = "choiceFirst()">` + first + `</div></td>
+								<td class = "choiceTableData"><div class = "choiceRight" onclick = "choiceSecond()">` + second + `</div></td>
+							</tr>
+						</table>`;
+					} else {
+						char = 0;
+						startChar = 0;
+						document.getElementById("choice").innerHTML = ``;
+					}
+
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if ((plusOrMinus === "plus") && (page == text[block].length - 1)) {
+					if ((block === 3) || (block === 4)) {
+						block = 5;
+						page = 0;
+						update("newBlock")
+					} else if ((block === 6) || (block === 8) || (block === 10)) {
+						block = 12;
+						page = 0;
+						update("newBlock")
+					}
+				}
+			} function addChar() {
+				document.getElementById("text").innerHTML = text[block][page].slice(startChar, char);
+				char++;
+
+				if (char === text[block][page].length + 1) {
+					clearInterval(interval);
+				}
+			} function choiceFirst() {
+				if ((block === 0) || (block === 2)) {
+					block = 1;			
+				} else if (block === 1) {
+					block = 4;
+				} else if (block === 5) {
+					block = 6;
+				} else if (block === 7) {
+					block = 9;
+				} else if (block === 9) {
+					block = 11;
+				}
+
+				page = 0;
+				update("newBlock")
+			} function choiceSecond() {
+				if (block === 0) {
+					block = 2;			
+				} else if ((block === 1) || (block === 2)) {
+					block = 3;
+				} else if (block === 5) {
+					block = 7;
+				} else if (block === 7) {
+					block = 8;
+				} else if (block === 9) {
+					block = 10;
+				}
+
+				page = 0;
+				update("newBlock")
+			}
+		</script>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td class = "imagesTableData" colspan = "2" id = "choice">
+
+				</td>
+			</tr>
+			<tr>
+				<td class = "placeForText" rowspan = "2">
+					<div class = "text" id = "text"></div>
+				</td>
+				<td>
+					<div class = "nextButton" onclick = 'update("plus")'>След.</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class = "backButton" onclick = 'update("minus")'>Пред.</div>
+				</td>
+			</tr>
+		</table>
+		<script>
+			document.getElementById("text").innerHTML = text[0];
+
+			char = 0
+			interval = setInterval(addChar, 15);
+		</script>
+	</body>
+</html>
